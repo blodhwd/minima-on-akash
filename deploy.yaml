@@ -1,0 +1,44 @@
+---
+version: "2.0"
+services:
+  minima:
+    image: minimaglobal/minima:latest
+    expose:
+      - port: 9001 # The main Minima port, for peer-to-peer communication over Minima and Maxima
+        as: 9001
+        to:
+          - global: true
+      - port: 9003 # MiniDapp System (MDS) Web Server
+        as: 9003
+        to:
+          - global: true
+      - port: 9005 # JSON-RPC over HTTP
+        as: 9005
+        to:
+          - global: true
+    env:
+      - minima_mdspassword=INSERTPASSWORD # specify the mds login password
+      - minima_server=true # this node can accept incoming connections
+      - minima_rpcenable=true # enable remote procedure call
+      - mdsenable=true # enable the MiniDapp System (default port 9003)
+profiles:
+  compute:
+    minima:
+      resources:
+        cpu:
+          units: 4
+        memory:
+          size: 4GB
+        storage:
+          - size: 4Gi
+  placement:
+    dcloud:
+      pricing:
+        minima:
+          denom: uakt
+          amount: 10000
+deployment:
+  minima:
+    dcloud:
+      profile: minima
+      count: 1
